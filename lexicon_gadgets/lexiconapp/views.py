@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect,get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -6,9 +6,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from lexiconapp.models import *
 from lexiconapp import forms
 from django.contrib.auth.forms import UserChangeForm
-from .models import ProfileUpdateForm,UserUpdateForm
+from .models import ProfileUpdateForm,UserUpdateForm,Customer,OrderItem,Order
 from django.urls import reverse
 from django.template import loader
+from django.utils import timezone
+
 # Create your views here.
 
 def check_admin(user):
@@ -228,4 +230,29 @@ def updateprofile(request):
 
 
     return render(request, 'lexiconapp/updateprofile.html', context)
+
+
+
+def add_to_basket(request,title):
+    item= get_object_or_404(Product,title=title)
+    order_item = OrderItem.objects.create(product = item)
+    order_qs = Order.objects.filter(customer= request.customer,  complete = False)
+    if order_qs.exists():
+        order=order_qs[0]
+        
+        if order.items.filter(item__title = item.title).exists():
+            order_item.quantity +=1
+            order_item.save()
+        else:
+            order.items.add(order_item)
+    else:
+        date_ordered=timezone.now()
+        order= Order.objects.create(customer = request.customer, date_ordered=date_ordered)
+        order.items.add(order_item)
+        return redirect("card",title=title)
+
+
+
+
+
     # Redirect back to profile page

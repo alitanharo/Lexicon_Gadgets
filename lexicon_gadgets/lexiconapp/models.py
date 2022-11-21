@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django import forms
+from django.shortcuts import reverse
 
 # Create your models here.
 
@@ -12,34 +13,14 @@ class Product(models.Model):
     brand = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
     images = models.URLField(max_length=255)
+   
+    
 
     def __str__(self):
         return self.title
-
-
-# class Basket(models.Model):
-#             user = models.ForeignKey(User, on_delete=models.CASCADE)
-#             product = models.ForeignKey(Product, on_delete=models.CASCADE)
-#             quantity=models.IntegerField()
-#             pass
-#             def __str__(self):
-#                     return self.title
-
-
-# class Oreder(models.Model):
-
-#             order_number=models.IntegerField()
-#             products = models.ManyToManyField(Basket)
-#             ordered = models.BooleanField(default=False)
-#             user = models.ForeignKey(User, on_delete=models.CASCADE)
-#             start_date = models.DateTimeField(auto_now_add=True)
-#             oredered_date=models.DateTimeField()
-#             user_discount=models.DecimalField()
-#             total_price=models.IntegerField()
-#             def __str__(self):
-#                     return self.user.username
-
-
+    
+    
+    
 class Customer(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, null=True, blank=True)
@@ -47,12 +28,35 @@ class Customer(models.Model):
     email = models.CharField(max_length=240, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.name   
+
+
+# class Basket(models.Model):
+#             customer = models.ForeignKey(Customer, on_delete=models.CASCADE , default="test")
+#             product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#             quantity=models.IntegerField()
+#             pass
+#             def __str__(self):
+#                     return self.title
+
+
+# class OrederDetail(models.Model):
+#             products = models.ManyToManyField(Basket)
+#             ordered = models.BooleanField(default=False)
+#             customer = models.ForeignKey(Customer, on_delete=models.CASCADE , default="test" )
+#             start_date = models.DateTimeField(auto_now_add=True)
+           
+           
+           
+#             def __str__(self):
+#                     return self.user.username
+
+
+
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True)
@@ -66,6 +70,8 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.quantity} of {self.product.title}"
 
 
 class ShippingAddress(models.Model):
@@ -102,6 +108,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=120)
     phone = models.CharField(max_length=10)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -117,3 +124,5 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ['email']
 
+def get_add_to_basket_url(self):
+    return reverse("add_to_basket", kwargs={"title": self.title})

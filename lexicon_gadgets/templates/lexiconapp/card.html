@@ -8,7 +8,7 @@
       <p class="card-item">{{item.brand}}</p>
       <p class="card-item">{{item.description}}</p>
       <p class="card-item">{{item.price}}</p>
-      <a href="#" class="btn btn-primary">ADD</a>
+     <a href="{{object.get_add_to_basket_url}}" class="btn btn-primary">ADD</a>
     </div>
     {% if user.is_superuser %}
     <a href="lexiconapp/update/{{ item.id }}">Edit product</a>
