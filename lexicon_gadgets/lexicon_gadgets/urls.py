@@ -18,13 +18,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from lexiconapp import views
-from django.contrib.auth import views as auth_views
-# from django.contrib.auth.views import PasswordResetView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include('lexiconapp.urls')),
     path('login', views.userlogin, name='userlogin'),
-    path('accounts/', include('django.contrib.auth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 handler404 = 'lexiconapp.views.error_404_view'
