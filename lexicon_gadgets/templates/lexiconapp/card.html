@@ -51,8 +51,8 @@
         
             <a href="#" class="btn btn-primary position-absolute bottom-0 start-50 translate-middle-x" style="width: 6rem ">ADD</a>
             {% if user.is_superuser %}
-            <a href="{% url 'update' item.slug %}">Edit product</a>
-            <a href="{% url 'delete' item.slug %}">Delete product</a>
+            <a  class="position-absolute bottom-0 start-0" href="{% url 'update' item.slug %}">Edit </a> 
+            <a  class="position-absolute bottom-0 end-0" href="{% url 'delete' item.slug %}">Delete </a>
             {% else %} {% endif %}
         
     </div>
